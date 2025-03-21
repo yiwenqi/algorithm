@@ -1,5 +1,7 @@
 package base
 
+import "math"
+
 func lengthOfLongestSubstring(s string) int {
 	if len(s) <= 1 {
 		return len(s)
@@ -12,10 +14,25 @@ func lengthOfLongestSubstring(s string) int {
 	 * 3. 重复字符的索引，表示下一个子串的开始位置
 	 */
 	m := make(map[byte]int)
-	tmpStr := ""
-	left, max := 0, 0
+	left, maxIndex := 0, 0
 	for i := 0; i < len(s); i++ {
-
+		if index, ok := m[s[i]]; ok {
+			if index >= left {
+				maxIndex = int(math.Max(float64(maxIndex), float64(i-left)))
+				left = m[s[i]] + 1
+				m[s[i]] = i
+				continue
+			}
+		}
+		m[s[i]] = i
+		if i == len(s)-1 && left != len(s)-1 {
+			maxIndex = int(math.Max(float64(maxIndex), float64(i-left+1)))
+		}
 	}
-	return 0
+
+	if maxIndex == 0 {
+		maxIndex = len(s)
+	}
+
+	return maxIndex
 }
